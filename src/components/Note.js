@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 
@@ -28,8 +27,11 @@ const useStyles = makeStyles({
 const currentDate = new Date();
 
 const Note = ({ date = currentDate, description, title }) => {
+  const [checked, setChecked] = useState(false);
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
+
+  const handleChange = () => {};
 
   return (
     <Card className={classes.root}>
