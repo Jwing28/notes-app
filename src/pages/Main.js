@@ -110,7 +110,7 @@ const Main = () => {
       {/* {if there}  */}
       <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>
       <EmptyNotes />
-      <Modal open={true} aria-labelledby='add note modal'>
+      <Modal open={showNote} aria-labelledby='add note modal'>
         <NewNote onClose={handleCloseNote} />
       </Modal>
     </section>
