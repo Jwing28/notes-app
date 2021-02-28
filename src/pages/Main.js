@@ -7,14 +7,42 @@ import Search from '../components/Search';
 import styled from 'styled-components';
 
 import Notes from '../components/Notes';
-import { ReactComponent as EmptyNotes } from '../assets/add-note-illustration.svg';
+import { ReactComponent as EmptyNotesIcon } from '../assets/add-note-illustration.svg';
 import { Modal } from '@material-ui/core';
 import NewNote from '../components/NewNote';
+import Note from '../components/Note';
+
+const initialNotes = {
+  home: {
+    isComplete: false,
+    title: 'Home Note',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+
+  work: {
+    isComplete: false,
+    title: 'Work Note',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+
+  personal: {
+    isComplete: false,
+    title: 'Personal Note',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+};
 
 const initialState = {
-  home: [],
-  work: [],
-  personal: [],
+  home: [initialNotes.home],
+  work: [initialNotes.work],
+  personal: [initialNotes.personal],
+  completedNotes: 0,
 };
 
 // styled-components
@@ -31,6 +59,11 @@ const EmptyNotesMessage = styled.h1`
 const FiltersContainer = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+const ProgressContainer = styled.div`
+  width: 60%;
+  margin: 1rem auto;
 `;
 
 const SearchContainer = styled.div`
@@ -66,8 +99,9 @@ const reducer = (state, action) => {
 const Main = () => {
   const [showNote, setShowNote] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { completedNotes, totalNotes } = state;
-
+  const { completedNotes, home, work, personal } = state;
+  const totalNotes = home.length + personal.length + work.length;
+  console.log({ state });
   // user of note component will handle its appearance. but note itself will handle form state.
   const handleAddNote = () => setShowNote(true);
   const handleCloseNote = () => setShowNote(false);
@@ -100,6 +134,18 @@ const Main = () => {
             &nbsp;ADD NOTE
           </Button>
         </ActionsContainer>
+        <ProgressContainer>
+          <div
+            style={{
+              textAlign: 'left',
+              fontWeight: 'bold',
+              padding: '0.5rem 0',
+            }}
+          >
+            You have {completedNotes}/{totalNotes} notes completed
+          </div>
+          <LinearProgress variant='determinate' value={0} />
+        </ProgressContainer>
       </div>
       {/* <LinearProgress variant='determinate' value={0} />
       <h3>
@@ -108,8 +154,14 @@ const Main = () => {
       <Notes /> */}
       {/* {if there are no notes, show the 'you donnt have any notes'} */}
       {/* {if there}  */}
-      <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>
-      <EmptyNotes />
+      {totalNotes ? (
+        <Note noteType='' noteContents={personal[0]} />
+      ) : (
+        <>
+          <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>
+          <EmptyNotesIcon />
+        </>
+      )}
       <Modal open={showNote} aria-labelledby='add note modal'>
         <NewNote onClose={handleCloseNote} />
       </Modal>

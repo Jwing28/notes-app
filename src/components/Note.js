@@ -1,15 +1,55 @@
-import React, { useReducer, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import React, { useState } from 'react';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
+import { styled as styledMui } from '@material-ui/core/styles';
+import styled from 'styled-components';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+
+// Styled-components
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const CompletedContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ChangesContainer = styled.div`
+  display: flex;
+`;
+
+// Styled Mui components
+const StyledCard = styledMui(Card)({
+  backgroundColor: '#66BB6A',
+});
+
+const StyledCardContent = styledMui(CardContent)({
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const WhiteCheckbox = withStyles({
+  root: {
+    color: 'white',
+    '&$checked': {
+      color: 'lightgray',
+    },
+  },
+  checked: {},
+})((props) => <Checkbox color='default' {...props} />);
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 275,
+    maxWidth: 500,
+    color: 'white',
+    minHeight: 50,
   },
   bullet: {
     display: 'inline-block',
@@ -17,7 +57,11 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)',
   },
   title: {
-    fontSize: 14,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    color: 'white',
+    marginBottom: '0',
   },
   pos: {
     marginBottom: 12,
@@ -26,19 +70,26 @@ const useStyles = makeStyles({
 
 const currentDate = new Date();
 
-const Note = ({ date = currentDate, description, title }) => {
+const Note = ({ noteContents = {}, noteType = '' }) => {
+  const { date, description, isComplete, title } = noteContents;
+  console.log(noteContents);
   const [checked, setChecked] = useState(false);
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
   const handleChange = () => {};
-
+  /*
+  checkbox title    action keys
+  description
+  date
+*/
   return (
-    <Card className={classes.root}>
-      <CardContent>
-        <div>
-          <div>
-            <Checkbox
+    <StyledCard className={classes.root}>
+      <StyledCardContent>
+        <ActionsContainer>
+          <CompletedContainer>
+            <WhiteCheckbox
+              iconStyle={{ fill: 'white' }}
               checked={checked}
               onChange={handleChange}
               inputProps={{ 'aria-label': 'primary checkbox' }}
@@ -50,19 +101,20 @@ const Note = ({ date = currentDate, description, title }) => {
             >
               {title}
             </Typography>
-          </div>
-          <div>
+          </CompletedContainer>
+          <ChangesContainer>
             <CardActions>
-              <Button size='small'>Learn More</Button>
+              <EditIcon style={{ color: 'white' }} />
+              <DeleteIcon style={{ color: 'white' }} />
             </CardActions>
-          </div>
-        </div>
+          </ChangesContainer>
+        </ActionsContainer>
         <div>{description}</div>
-      </CardContent>
-      <Typography className={classes.title} color='textSecondary' gutterBottom>
+      </StyledCardContent>
+      <Typography className={classes.root} color='textSecondary' gutterBottom>
         {date}
       </Typography>
-    </Card>
+    </StyledCard>
   );
 };
 

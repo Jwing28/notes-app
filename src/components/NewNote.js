@@ -123,7 +123,7 @@ const categories = [
   },
   {
     value: 'Personal',
-    text: 'Personal`',
+    text: 'Personal',
   },
 ];
 
@@ -156,9 +156,9 @@ const NewNote = ({ open, handleAdd, onClose }) => {
             <MenuItem value='' selected>
               <em>None</em>
             </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+            {categories.map((category) => (
+              <MenuItem value={category.value}>{category.text}</MenuItem>
+            ))}
           </Select>
         </StyledFormControl>
       </StyledContainer>
