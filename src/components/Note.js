@@ -32,6 +32,8 @@ const StyledCard = styledMui(Card)({
 
 const StyledCardContent = styledMui(CardContent)({
   display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'space-between',
   flexDirection: 'column',
 });
 
@@ -63,6 +65,15 @@ const useStyles = makeStyles({
     color: 'white',
     marginBottom: '0',
   },
+  home: {
+    backgroundColor: '#FF9100',
+  },
+  work: {
+    backgroundColor: '#5C6BC0',
+  },
+  personal: {
+    backgroundColor: '#66BB6A',
+  },
   pos: {
     marginBottom: 12,
   },
@@ -72,11 +83,10 @@ const currentDate = new Date();
 
 const Note = ({ noteContents = {}, noteType = '' }) => {
   const { date, description, isComplete, title } = noteContents;
-  console.log(noteContents);
   const [checked, setChecked] = useState(false);
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-
+  console.log(noteType);
   const handleChange = () => {};
   /*
   checkbox title    action keys
@@ -84,12 +94,11 @@ const Note = ({ noteContents = {}, noteType = '' }) => {
   date
 */
   return (
-    <StyledCard className={classes.root}>
+    <StyledCard className={`${classes.root} ${classes[noteType]}`}>
       <StyledCardContent>
         <ActionsContainer>
           <CompletedContainer>
             <WhiteCheckbox
-              iconStyle={{ fill: 'white' }}
               checked={checked}
               onChange={handleChange}
               inputProps={{ 'aria-label': 'primary checkbox' }}

@@ -155,7 +155,7 @@ const Main = () => {
       {/* {if there are no notes, show the 'you donnt have any notes'} */}
       {/* {if there}  */}
       {totalNotes ? (
-        <Note noteType='' noteContents={personal[0]} />
+        <Note noteType='work' noteContents={personal[0]} />
       ) : (
         <>
           <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>
