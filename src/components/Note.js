@@ -9,6 +9,8 @@ import { styled as styledMui } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
+import Popover from '@material-ui/core/Popover';
 
 // Styled-components
 const ActionsContainer = styled.div`
@@ -65,6 +67,10 @@ const useStyles = makeStyles({
     color: 'white',
     marginBottom: '0',
   },
+  completed: {
+    backgroundColor: '#282E2999',
+    textDecoration: 'line-through',
+  },
   home: {
     backgroundColor: '#FF9100',
   },
@@ -83,24 +89,40 @@ const currentDate = new Date();
 
 const Note = ({ noteContents = {}, noteType = '' }) => {
   const { date, description, isComplete, title } = noteContents;
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [checked, setChecked] = useState(false);
+  const [shouldDelete, setShouldDelete] = useState(false);
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-  console.log(noteType);
-  const handleChange = () => {};
+
+  const handleChecked = () => setChecked(!checked);
+  const handleCloseDeleteNote = () => {
+    setAnchorEl(null);
+    setShouldDelete(false);
+  };
+  const handleDeleteNote = (e) => {
+    setAnchorEl(e.currentTarget);
+    setShouldDelete(!shouldDelete);
+  };
+  const handleEditNote = () => {};
   /*
   checkbox title    action keys
   description
   date
 */
   return (
-    <StyledCard className={`${classes.root} ${classes[noteType]}`}>
+    <StyledCard
+      className={`${classes.root} ${
+        checked ? classes['completed'] : classes[noteType]
+      }`}
+    >
       <StyledCardContent>
         <ActionsContainer>
           <CompletedContainer>
             <WhiteCheckbox
               checked={checked}
-              onChange={handleChange}
+              onChange={handleChecked}
               inputProps={{ 'aria-label': 'primary checkbox' }}
             />
             <Typography
@@ -113,8 +135,27 @@ const Note = ({ noteContents = {}, noteType = '' }) => {
           </CompletedContainer>
           <ChangesContainer>
             <CardActions>
-              <EditIcon style={{ color: 'white' }} />
-              <DeleteIcon style={{ color: 'white' }} />
+              <IconButton aria-label='edit note' onClick={handleEditNote}>
+                <EditIcon style={{ color: 'white' }} />
+              </IconButton>
+              <IconButton onClick={handleDeleteNote}>
+                <DeleteIcon style={{ color: 'white' }} />
+              </IconButton>
+              <Popover
+                open={shouldDelete}
+                anchorEl={anchorEl}
+                onClose={handleCloseDeleteNote}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+              >
+                The content of the Popover.
+              </Popover>
             </CardActions>
           </ChangesContainer>
         </ActionsContainer>
