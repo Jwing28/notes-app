@@ -118,7 +118,10 @@ const Note = ({ noteContents = {}, noteType = '' }) => {
     setAnchorEl(e.currentTarget);
     setShouldDelete(!shouldDelete);
   };
-  const handleEditNote = () => {};
+  const handleEditNote = () => {
+    // edit should open the same content that add a new note does,
+    // only this time we're going to fill it with all the data.
+  };
   /*
   checkbox title    action keys
   description

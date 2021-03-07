@@ -1,6 +1,5 @@
 import React, { useReducer, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import AddIcon from '@material-ui/icons/Add';
 import Search from '../components/Search';
@@ -10,39 +9,60 @@ import Notes from '../components/Notes';
 import { ReactComponent as EmptyNotesIcon } from '../assets/add-note-illustration.svg';
 import { Modal } from '@material-ui/core';
 import NewNote from '../components/NewNote';
-import Note from '../components/Note';
 
-const initialNotes = {
-  home: {
+const initialNotes = [
+  {
+    type: 'home',
     isComplete: false,
     title: 'Home Note',
     description:
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
     date: new Date().toString(),
   },
-
-  work: {
+  {
+    type: 'home',
+    isComplete: false,
+    title: 'Home Note 2',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+  {
+    type: 'work',
     isComplete: false,
     title: 'Work Note',
     description:
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
     date: new Date().toString(),
   },
-
-  personal: {
+  {
+    type: 'work',
+    isComplete: false,
+    title: 'Work Note 2',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+  {
+    type: 'personal',
     isComplete: false,
     title: 'Personal Note',
     description:
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
     date: new Date().toString(),
   },
-};
+  {
+    type: 'personal',
+    isComplete: false,
+    title: 'Personal Note 2',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
+    date: new Date().toString(),
+  },
+];
 
 const initialState = {
-  home: [initialNotes.home],
-  work: [initialNotes.work],
-  personal: [initialNotes.personal],
-  completedNotes: 0,
+  notes: initialNotes,
 };
 
 // styled-components
@@ -81,14 +101,26 @@ const SearchContainer = styled.div`
       completed
 */
 
+// need to think about how you should update the state
 const reducer = (state, action) => {
   switch (action.type) {
     case 'SAVE_NOTE':
-      return {};
+      return {
+        notes: state.notes.slice().concat(action.payload),
+      };
     case 'EDIT_NODE':
-      return {};
+      // update only one note...
+      return {
+        notes: state.notes.map((note) =>
+          note.title === action.payload.title ? action.payload.note : note
+        ),
+      };
     case 'DELETE_NOTE':
-      return {};
+      return {
+        notes: state.notes.filter(
+          (note) => note.title !== action.payload.title
+        ),
+      };
     default:
       return state;
   }
@@ -98,16 +130,29 @@ const reducer = (state, action) => {
 
 const Main = () => {
   const [showNote, setShowNote] = useState(false);
+  // need to start setting up dispatch here....
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { completedNotes, home, work, personal } = state;
-  const totalNotes = home.length + personal.length + work.length;
-  console.log({ state });
+  const { notes } = state;
+
+  // maybe it should all just be "notes"...
+  // then have functions that provide filter/search
+  const completedNotes = notes.reduce(
+    (total, currentNote) => (currentNote.isComplete ? total + 1 : total),
+    0
+  );
+  const totalNotes = notes.length;
   // user of note component will handle its appearance. but note itself will handle form state.
   const handleAddNote = () => setShowNote(true);
   const handleCloseNote = () => setShowNote(false);
 
-  const handleSearch = () => {};
-
+  // updates notes rendered when searching
+  const handleSearch = (e) => {
+    const newNotes = notes
+      .slice()
+      .filter((note) => note.title.includes(e.target.value));
+  };
+  // updates notes rendered when filtering
+  const handleFilter = (filterType) => {};
   return (
     <section>
       <div>
@@ -154,8 +199,9 @@ const Main = () => {
       <Notes /> */}
       {/* {if there are no notes, show the 'you donnt have any notes'} */}
       {/* {if there}  */}
+      {/* <Notes notes={} /> */}
       {totalNotes ? (
-        <Note noteType='work' noteContents={personal[0]} />
+        <Notes notes={notes} />
       ) : (
         <>
           <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>
