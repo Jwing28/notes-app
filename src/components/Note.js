@@ -11,6 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
+import { Button } from '@material-ui/core';
 
 // Styled-components
 const ActionsContainer = styled.div`
@@ -25,6 +26,11 @@ const CompletedContainer = styled.div`
 
 const ChangesContainer = styled.div`
   display: flex;
+`;
+
+const DeleteNoteActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 // Styled Mui components
@@ -59,6 +65,13 @@ const useStyles = makeStyles({
     display: 'inline-block',
     margin: '0 2px',
     transform: 'scale(0.8)',
+  },
+  deleteNote: {
+    padding: '1rem',
+    display: 'flex',
+    minHeight: '1.5rem',
+    minWidth: '15vw',
+    flexDirection: 'column',
   },
   title: {
     fontSize: 18,
@@ -154,7 +167,15 @@ const Note = ({ noteContents = {}, noteType = '' }) => {
                   horizontal: 'left',
                 }}
               >
-                The content of the Popover.
+                <Card className={classes.deleteNote}>
+                  <Typography variant='h6' gutterBottom>
+                    Delete Note?
+                  </Typography>
+                  <DeleteNoteActions>
+                    <Button onClick={handleCloseDeleteNote}>CANCEL</Button>
+                    <Button>DELETE</Button>
+                  </DeleteNoteActions>
+                </Card>
               </Popover>
             </CardActions>
           </ChangesContainer>
