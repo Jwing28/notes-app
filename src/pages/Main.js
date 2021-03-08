@@ -1,4 +1,5 @@
 import React, { useReducer, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import AddIcon from '@material-ui/icons/Add';
@@ -79,6 +80,7 @@ const EmptyNotesMessage = styled.h1`
 const FiltersContainer = styled.div`
   display: flex;
   justify-content: center;
+  margin: 0 0.5rem;
 `;
 
 const ProgressContainer = styled.div`
@@ -91,6 +93,21 @@ const SearchContainer = styled.div`
   justify-content: center;
   margin: 3rem 1rem 1rem;
 `;
+
+const useStyles = makeStyles({
+  home: {
+    backgroundColor: '#FF9100',
+    color: 'white',
+  },
+  work: {
+    backgroundColor: '#5C6BC0',
+    color: 'white',
+  },
+  personal: {
+    backgroundColor: '#66BB6A',
+    color: 'white',
+  },
+});
 
 /*
   structure of a note: 
@@ -129,11 +146,13 @@ const reducer = (state, action) => {
 // import add note component.
 
 const Main = () => {
+  const classes = useStyles();
   const [showNote, setShowNote] = useState(false);
   // need to start setting up dispatch here....
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [filterState, setFilterState] = useState('all');
   const { notes } = state;
-
+  const [visibleNotes, setVisibleNotes] = useState(notes);
   // maybe it should all just be "notes"...
   // then have functions that provide filter/search
   const completedNotes = notes.reduce(
@@ -146,13 +165,26 @@ const Main = () => {
   const handleCloseNote = () => setShowNote(false);
 
   // updates notes rendered when searching
-  const handleSearch = (e) => {
-    const newNotes = notes
+  const handleSearch = (value) => {
+    console.log({ notes });
+    // show all notes where the search text is included in the title
+    const searchNotes = notes
       .slice()
-      .filter((note) => note.title.includes(e.target.value));
+      .filter((note) => note.title.toLowerCase().includes(value));
+    setVisibleNotes(searchNotes);
   };
   // updates notes rendered when filtering
-  const handleFilter = (filterType) => {};
+  const handleFilter = (filterType) => {
+    if (filterType === 'all') {
+      setVisibleNotes(notes);
+    } else {
+      const filteredNotes = notes
+        .slice()
+        .filter((note) => note.type === filterType);
+      setVisibleNotes(filteredNotes);
+    }
+    setFilterState(filterType);
+  };
   return (
     <section>
       <div>
@@ -161,17 +193,39 @@ const Main = () => {
         </SearchContainer>
         <ActionsContainer>
           <FiltersContainer>
-            <Button variant='contained' color='primary'>
+            <Button
+              variant={filterState === 'all' ? 'contained' : 'text'}
+              color={filterState === 'all' ? 'primary' : 'default'}
+              onClick={() => handleFilter('all')}
+            >
               All
             </Button>
             <div>
-              <Button>Home</Button>
+              <Button
+                variant={filterState === 'home' ? 'contained' : 'text'}
+                className={filterState === 'home' && classes[filterState]}
+                onClick={() => handleFilter('home')}
+              >
+                Home
+              </Button>
             </div>
             <div>
-              <Button>Work</Button>
+              <Button
+                variant={filterState === 'work' ? 'contained' : 'text'}
+                className={filterState === 'work' && classes[filterState]}
+                onClick={() => handleFilter('work')}
+              >
+                Work
+              </Button>
             </div>
             <div>
-              <Button>Personal</Button>
+              <Button
+                variant={filterState === 'personal' ? 'contained' : 'text'}
+                className={filterState === 'personal' && classes[filterState]}
+                onClick={() => handleFilter('personal')}
+              >
+                Personal
+              </Button>
             </div>
           </FiltersContainer>
           <Button variant='contained' color='primary' onClick={handleAddNote}>
@@ -201,7 +255,7 @@ const Main = () => {
       {/* {if there}  */}
       {/* <Notes notes={} /> */}
       {totalNotes ? (
-        <Notes notes={notes} />
+        <Notes notes={visibleNotes} />
       ) : (
         <>
           <EmptyNotesMessage>You don't have any notes</EmptyNotesMessage>

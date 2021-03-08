@@ -172,7 +172,7 @@ const Note = ({ noteContents = {}, noteType = '' }) => {
               >
                 <Card className={classes.deleteNote}>
                   <Typography variant='h6' gutterBottom>
-                    Delete Note?
+                    Delete Note ({title})?
                   </Typography>
                   <DeleteNoteActions>
                     <Button onClick={handleCloseDeleteNote}>CANCEL</Button>

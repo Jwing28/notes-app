@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -26,8 +26,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomSearch = ({ name, onChange, value }) => {
+const CustomSearch = ({ onChange }) => {
+  const [value, setValue] = useState('');
   const classes = useStyles();
+
+  const handleChange = (e) => {
+    // displays the input when typed
+    setValue(e.target.value);
+    // passed to parent to filter notes
+    onChange(e.target.value);
+  };
 
   return (
     <Box component='form' boxShadow={2} className={classes.root}>
@@ -42,8 +50,7 @@ const CustomSearch = ({ name, onChange, value }) => {
         className={classes.input}
         placeholder='Search notes...'
         inputProps={{ 'aria-label': 'search google maps' }}
-        onChange={onChange}
-        name={name}
+        onChange={handleChange}
         value={value}
       />
     </Box>

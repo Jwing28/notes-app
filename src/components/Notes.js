@@ -10,16 +10,25 @@ import Note from './Note';
 
 const NotesContainer = styled.div`
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  & > * {
+    flex: 0 0 50%;
+    margin: 5px;
+  }
 `;
 
 // the notes order will be controlled above by its parent.
 // it can be filtered / searched by title or show all notes
-const Notes = ({ notes }) => {
-  <NotesContainer>
-    {notes.map((note) => (
-      <Note noteType={note.type} noteContents={note} index={note.title} />
-    ))}
-  </NotesContainer>;
+const Notes = ({ notes = [] }) => {
+  return (
+    <NotesContainer>
+      {notes.map((note) => (
+        <Note noteType={note.type} noteContents={note} key={note.title} />
+      ))}
+    </NotesContainer>
+  );
 };
 
 export default Notes;
