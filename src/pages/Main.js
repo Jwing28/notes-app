@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -11,59 +11,8 @@ import { ReactComponent as EmptyNotesIcon } from '../assets/add-note-illustratio
 import { Modal } from '@material-ui/core';
 import NewNote from '../components/NewNote';
 
-const initialNotes = [
-  {
-    type: 'home',
-    isComplete: false,
-    title: 'Home Note',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-  {
-    type: 'home',
-    isComplete: false,
-    title: 'Home Note 2',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-  {
-    type: 'work',
-    isComplete: false,
-    title: 'Work Note',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-  {
-    type: 'work',
-    isComplete: false,
-    title: 'Work Note 2',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-  {
-    type: 'personal',
-    isComplete: false,
-    title: 'Personal Note',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-  {
-    type: 'personal',
-    isComplete: false,
-    title: 'Personal Note 2',
-    description:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita…',
-    date: new Date().toString(),
-  },
-];
-
 const initialState = {
-  notes: initialNotes,
+  notes: [],
 };
 
 // styled-components
@@ -120,20 +69,24 @@ const useStyles = makeStyles({
 
 // need to think about how you should update the state
 const reducer = (state, action) => {
+  console.log({ action });
   switch (action.type) {
-    case 'SAVE_NOTE':
+    case 'CREATE_NOTE':
       return {
+        ...state,
         notes: state.notes.slice().concat(action.payload),
       };
     case 'EDIT_NODE':
       // update only one note...
       return {
+        ...state,
         notes: state.notes.map((note) =>
           note.title === action.payload.title ? action.payload.note : note
         ),
       };
     case 'DELETE_NOTE':
       return {
+        ...state,
         notes: state.notes.filter(
           (note) => note.title !== action.payload.title
         ),
@@ -153,6 +106,11 @@ const Main = () => {
   const [filterState, setFilterState] = useState('all');
   const { notes } = state;
   const [visibleNotes, setVisibleNotes] = useState(notes);
+
+  useEffect(() => {
+    setVisibleNotes(notes);
+  }, [notes]);
+
   // maybe it should all just be "notes"...
   // then have functions that provide filter/search
   const completedNotes = notes.reduce(
@@ -160,9 +118,19 @@ const Main = () => {
     0
   );
   const totalNotes = notes.length;
-  // user of note component will handle its appearance. but note itself will handle form state.
   const handleAddNote = () => setShowNote(true);
   const handleCloseNote = () => setShowNote(false);
+
+  const handleCreateNote = (newNote) => {
+    console.log({ newNote });
+    dispatch({ type: 'CREATE_NOTE', payload: newNote });
+  };
+
+  const handleDeleteNote = (deletedNote) =>
+    dispatch({ type: 'DELETE_NOTE', payload: deletedNote });
+
+  const handleEditNote = (editedNote) =>
+    dispatch({ type: 'EDIT_NOTE', payload: editedNote });
 
   // updates notes rendered when searching
   const handleSearch = (value) => {
@@ -185,6 +153,7 @@ const Main = () => {
     }
     setFilterState(filterType);
   };
+
   return (
     <section>
       <div>
@@ -246,14 +215,6 @@ const Main = () => {
           <LinearProgress variant='determinate' value={0} />
         </ProgressContainer>
       </div>
-      {/* <LinearProgress variant='determinate' value={0} />
-      <h3>
-        You have {`${completedNotes || 0} / ${totalNotes || 1}`} notes completed
-      </h3>
-      <Notes /> */}
-      {/* {if there are no notes, show the 'you donnt have any notes'} */}
-      {/* {if there}  */}
-      {/* <Notes notes={} /> */}
       {totalNotes ? (
         <Notes notes={visibleNotes} />
       ) : (
@@ -263,7 +224,7 @@ const Main = () => {
         </>
       )}
       <Modal open={showNote} aria-labelledby='add note modal'>
-        <NewNote onClose={handleCloseNote} />
+        <NewNote handleAdd={handleCreateNote} onClose={handleCloseNote} />
       </Modal>
     </section>
   );

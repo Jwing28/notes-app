@@ -25,7 +25,7 @@ const Notes = ({ notes = [] }) => {
   return (
     <NotesContainer>
       {notes.map((note) => (
-        <Note noteType={note.type} noteContents={note} key={note.title} />
+        <Note noteType={note.category} noteContents={note} key={note.title} />
       ))}
     </NotesContainer>
   );

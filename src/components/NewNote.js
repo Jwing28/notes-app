@@ -134,9 +134,21 @@ const NewNote = ({ open, handleAdd, onClose }) => {
   const handleDescriptionChange = (e) => setDescription(e.target.value);
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleCategory = (e) => setCategory(e.target.value);
+  const handleSubmit = (e) => {
+    // don't refresh page
+    e.preventDefault();
+    handleAdd({
+      category,
+      description,
+      title,
+      isComplete: false,
+      date: new Date().toString(),
+    });
+    onClose();
+  };
 
   return (
-    <StyledForm>
+    <StyledForm onSubmit={handleSubmit}>
       <StyledHeader>Add note</StyledHeader>
       <StyledContainer>
         <StyledInput
@@ -173,7 +185,7 @@ const NewNote = ({ open, handleAdd, onClose }) => {
         <Button color='primary' onClick={onClose}>
           CANCEL
         </Button>
-        <Button color='primary' onClick={handleAdd}>
+        <Button color='primary' type='submit'>
           ADD
         </Button>
       </StyledActions>
